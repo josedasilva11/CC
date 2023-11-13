@@ -1,0 +1,14 @@
+Register: Utilizado quando um FS_Node conecta-se pela primeira vez ou após de uma desconexão. Deve fornecer uma lista dos ficheiros que possui.
+Update: Enviado periodicamente ou quando há uma mudança no estado do FS_Node (novos ficheiros, ficheiros removidos, etc.).
+Query: Um pedido para localizar um ficheiro específico dentro da rede. Pode incluir o nome do ficheiro ou a hash do ficheiro.
+Response: A resposta do FS_Tracker para uma consulta, fornecendo o endereço dos nodos que têm o arquivo.
+
+
+action: Define a ação que o FS_Node quer realizar (por exemplo, "register", "update", "query", "response").
+node_id: Um identificador único para cada FS_Node, podendo ser um UUID, por exemplo.
+node_address: O endereço IP e a porta do FS_Node, usado para comunicação entre nodos.
+files: Uma lista de dicionários que contém informações sobre os ficheiros que o nodo possui.
+filename: O nome do ficheiro.
+filesize: O tamanho do ficheiro em bytes.
+filehash: Uma hash SHA-256 do ficheiro para verificação de integridade.
+timestamp: Um registo da data/hora da mensagem.
