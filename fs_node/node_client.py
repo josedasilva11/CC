@@ -55,7 +55,7 @@ if __name__ == "__main__":
     tracker_address = ('localhost', 9090)
     node_id = "seu_node_id"
     node_address = "seu_endereco_ip:porta"
-    files_directory = '/files'
+    files_directory = 'files'
 
     node_info = {
         "action": "register",
