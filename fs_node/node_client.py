@@ -15,14 +15,28 @@ def get_file_hash(filepath):
 def get_file_info(directory):
     """Gera a lista de informações dos arquivos para registro."""
     files = []
-    for filename in os.listdir(directory):
+
+    # Exemplo: criar arquivos fictícios no diretório, se não existirem
+    for i in range(1, 6):
+        filename = f"file{i}.txt"
         filepath = os.path.join(directory, filename)
-        if os.path.isfile(filepath):
-            files.append({
-                "filename": filename,
-                "filesize": os.path.getsize(filepath),
-                "filehash": get_file_hash(filepath)
-            })
+
+    # Criação de arquivos fictícios (substitua isso pelo seu caso real)
+        try:
+            with open(filepath, 'x') as file:
+                file.write(f"Conteúdo do arquivo {i}")
+        except FileExistsError:
+            # Se o arquivo já existir, apenas continue
+            pass
+
+    # Adiciona informações do arquivo à lista
+        files.append({
+            "filename": filename,
+            "filesize": os.path.getsize(filepath),
+            "filehash": get_file_hash(filepath)
+    })
+
+
     return files
 
 def register_with_tracker(tracker_address, node_info):
@@ -41,7 +55,7 @@ if __name__ == "__main__":
     tracker_address = ('localhost', 9090)
     node_id = "seu_node_id"
     node_address = "seu_endereco_ip:porta"
-    files_directory = '/caminho/para/sua/pasta/de/arquivos'
+    files_directory = '/files'
 
     node_info = {
         "action": "register",
@@ -53,3 +67,4 @@ if __name__ == "__main__":
 
     response = register_with_tracker(tracker_address, node_info)
     print(f"Resposta do Tracker: {response}")
+
