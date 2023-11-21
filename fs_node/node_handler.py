@@ -53,7 +53,49 @@ def query_file_location(tracker_address, node_id, file_name):
     request_data = {
         "action": "query",
         "node_id": node_id,
-        "filename": file_name,
+        "filename": 'files/file1.txt',
         "timestamp": datetime.now().isoformat()
     }
     return send_request_to_tracker(tracker_address, request_data)
+
+def send_file_to_client(tracker_address, node_id, file_name, files_directory):
+    """Envia um arquivo do FS_Tracker para um FS_Node."""
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect(tracker_address)
+            request_data = {
+                "action": "get",
+                "node_id": node_id,
+                "filename": file_name,
+                "timestamp": datetime.now().isoformat()
+            }
+            s.sendall(json.dumps(request_data).encode('utf-8'))
+
+            # Receber a resposta do tracker
+            response = s.recv(1024)
+            data = json.loads(response.decode('utf-8'))
+
+            if data.get("status") == "success":
+                file_content = data.get("file_content")
+                file_path = os.path.join(files_directory, file_name)
+
+                # Escrever o conteúdo do arquivo recebido
+                with open(file_path, 'w') as file:
+                    file.write(file_content)
+
+                return f"Arquivo {file_name} recebido com sucesso."
+
+            elif data.get("status") == "error":
+                return f"Erro: {data.get('message')}"
+
+    except socket.error as e:
+        return f"Erro de conexão: {str(e)}"
+
+if __name__ == "__main__":
+    tracker_address = ('localhost', 9090)
+    node_id = "seu_node_id"
+    file_name = "files/file1.txt"  # Substitua pelo nome do arquivo desejado
+    files_directory = 'files'
+
+    result = send_file_to_client(tracker_address, node_id, file_name, files_directory)
+    print(result)
