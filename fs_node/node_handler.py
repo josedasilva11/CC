@@ -53,7 +53,7 @@ def query_file_location(tracker_address, node_id, file_name):
     request_data = {
         "action": "query",
         "node_id": node_id,
-        "filename": 'files/file1.txt',
+        "filename": 'file1.txt',
         "timestamp": datetime.now().isoformat()
     }
     return send_request_to_tracker(tracker_address, request_data)

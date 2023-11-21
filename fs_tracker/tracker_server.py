@@ -29,6 +29,12 @@ def handle_client(conn, addr):
                 response = json.dumps(response_data).encode('utf-8')
                 conn.sendall(response)
 
+                # Se a ação for "register", "update" ou "query", continue aguardando comandos do nó
+                if message.get("action") in ["register", "update", "query"]:
+                    continue
+                else:
+                    break  # Encerrar a conexão após um comando diferente de "register", "update" ou "query"
+
         except json.JSONDecodeError:
             print("Received invalid JSON.")
         except Exception as e:

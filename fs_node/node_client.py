@@ -51,10 +51,39 @@ def register_with_tracker(tracker_address, node_info):
     except socket.error as e:
         return {'status': 'error', 'message': str(e)}
 
+def get_file_from_tracker(tracker_address, file_name):
+    """Solicita a transferência de um arquivo específico do tracker."""
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect(tracker_address)
+
+            # Envia a mensagem indicando que é uma operação GET
+            message = json.dumps({
+                "action": "get",
+                "filename": file_name,
+                "timestamp": datetime.now().isoformat()
+            }).encode('utf-8')
+            s.sendall(message)
+
+            # Recebe a confirmação do servidor para começar a receber os dados
+            confirmation = s.recv(1024).decode('utf-8')
+            if confirmation == "READY":
+                with open(file_name, 'wb') as file:
+                    # Recebe e salva os dados do arquivo em blocos
+                    data = s.recv(1024)
+                    while data:
+                        file.write(data)
+                        data = s.recv(1024)
+                print(f"Arquivo {file_name} recebido com sucesso.")
+            else:
+                print(f"Servidor não confirmou a operação GET para {file_name}.")
+    except socket.error as e:
+        print(f"Erro na solicitação GET: {e}")
+
 if __name__ == "__main__":
     tracker_address = ('localhost', 9090)
-    node_id = "seu_node_id"
     node_address = "seu_endereco_ip:porta"
+    node_id = hashlib.sha256(node_address.encode('utf-8')).hexdigest()
     files_directory = 'files'
 
     node_info = {
@@ -66,5 +95,8 @@ if __name__ == "__main__":
     }
 
     response = register_with_tracker(tracker_address, node_info)
-    print(f"Resposta do Tracker: {response}")
 
+    if response['status'] == 'success':
+        print(f"Conectado com sucesso! ID do nó: {node_id}")
+    else:
+        print(f"Falha na conexão: {response['message']}")
