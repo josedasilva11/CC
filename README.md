@@ -48,12 +48,12 @@ Ative o ambiente virtual (Windows):
    .\venv\Scripts\activate
 ```
 
-5. Instale as dependências: (temos de fazer o ficheiro)
+Instale as dependências: (temos de fazer o ficheiro)
 
    ```bash
 
    pip install -r requirements.txt
-
+```
 
 ## Uso
 ## FS_Tracker
