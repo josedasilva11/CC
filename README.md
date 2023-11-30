@@ -21,7 +21,7 @@ O File Sharing System é um sistema de partilha de arquivos que permite que vár
 Clone este repositório:
 
    ```bash
-   git clone https://github.com/seu-usuario/file-sharing-system.git
+   git clone https://github.com/josedasilva11/CC.git
 ```
 Navegue até à pasta do projeto:
 
