@@ -34,11 +34,11 @@ O File Sharing System é um sistema de partilha de arquivos que permite que vár
    ```bash
    python -m venv venv
 
-4.Ative o ambiente virtual (Linux/Mac):
+4. Ative o ambiente virtual (Linux/Mac):
 
    ```bash
    source venv/bin/activate
-```
+
 
 
 Ative o ambiente virtual (Windows):
