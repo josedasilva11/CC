@@ -1,3 +1,82 @@
+# File Sharing System
+
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+The File Sharing System is a file sharing system that allows multiple nodes (FS_Nodes) to share and query the location of files in a distributed network. The system consists of two main components: FS_Tracker (tracker) and FS_Node (node).
+
+## Features
+
+- Registration of FS_Nodes with FS_Tracker.
+- Periodic updating of file information in FS_Nodes.
+- Querying the location of files by name.
+
+## Requirements
+
+- Python 3.8 or higher.
+
+## Installation
+
+Clone this repository:
+
+   ```bash
+   git clone https://github.com/josedasilva11/CC.git
+```
+Navigate to the project directory:
+
+  ```bash
+cd file-sharing-system
+```
+Create a virtual environment (optional but recommended):
+```bash
+python -m venv venv
+
+```
+Activate the virtual environment (Linux/Mac):
+```bash
+source venv/bin/activate
+```
+
+Activate the virtual environment (Windows):
+```bash
+.\venv\Scripts\activate
+
+```
+
+Install the dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+
+
+## Usage
+## FS_Tracker
+Start the FS_Tracker server:
+
+
+```bash
+python tracker_server.py
+
+```
+FS_Tracker will be listening on localhost:9090 by default.
+
+## FS_Node
+Configure the FS_Tracker address in the fs_node.py file:
+
+```bash
+tracker_address = ('localhost', 9090)
+
+```
+Start an FS_Node:
+```bash
+python fs_node.py
+
+```
+The node will register with FS_Tracker and be ready to share files.
+
+
+
 
 # File Sharing System
 
