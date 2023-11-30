@@ -18,27 +18,27 @@ O File Sharing System é um sistema de partilha de arquivos que permite que vár
 
 ## Instalação
 
-1. Clone este repositório:
+Clone este repositório:
 
    ```bash
    git clone https://github.com/seu-usuario/file-sharing-system.git
-
-2. Navegue até à pasta do projeto:
+```
+Navegue até à pasta do projeto:
 
    ```bash
    cd file-sharing-system
+```
 
-
-3. Crie um ambiente virtual (opcional, mas recomendado):
+Crie um ambiente virtual (opcional, mas recomendado):
 
    ```bash
    python -m venv venv
-
-4. Ative o ambiente virtual (Linux/Mac):
+```
+Ative o ambiente virtual (Linux/Mac):
 
    ```bash
    source venv/bin/activate
-
+```
 
 
 Ative o ambiente virtual (Windows):
