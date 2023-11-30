@@ -25,29 +25,31 @@ O File Sharing System é um sistema de compartilhamento de arquivos que permite 
    git clone https://github.com/seu-usuario/file-sharing-system.git
 Navegue até o diretório do projeto:
 
-bash
-Copy code
-cd file-sharing-system
+   ```bash
+   cd file-sharing-system
 Crie um ambiente virtual (opcional, mas recomendado):
 
-bash
-Copy code
-python -m venv venv
+   ```bash
+   python -m venv venv
 Ative o ambiente virtual (Linux/Mac):
 
-bash
-Copy code
-source venv/bin/activate
+   ```bash
+   source venv/bin/activate
+
+
+
 Ative o ambiente virtual (Windows):
 
-bash
-Copy code
-.\venv\Scripts\activate
+   ```bash
+
+   .\venv\Scripts\activate
+
+
 Instale as dependências:
 
-bash
-Copy code
-pip install -r requirements.txt
+   ```bash
+
+   pip install -r requirements.txt
 Uso
 FS_Tracker
 Inicie o servidor FS_Tracker:
