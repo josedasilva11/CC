@@ -13,6 +13,14 @@ nodes_info = {}
 nodes_lock = threading.Lock()
 
 def handle_client(conn, addr):
+    
+#    Lida com as requisições de um cliente (FS_Node).
+#
+#    Args:
+#        conn (socket.socket): O objeto de soquete para comunicação com o cliente.
+#        addr (tuple): A tupla contendo o endereço IP e a porta do cliente.
+        
+        
     with conn:
         print(f"Connected by {addr}")
         try:
@@ -43,6 +51,9 @@ def handle_client(conn, addr):
             print(f"Connection closed with {addr}")
 
 def start_server():
+    
+    #Inicia o servidor FS_Tracker para lidar com as conexões dos FS_Nodes.
+    
     host = ''  # Endereço IP em branco significa escutar em todas as interfaces disponíveis
     port = 9090
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

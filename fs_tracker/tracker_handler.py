@@ -7,7 +7,14 @@ nodes_info = {}
 nodes_lock = threading.Lock()
 
 def process_request(request_data):
-    """Processa a requisição recebida do FS_Node."""
+    
+#    Processa a requisição recebida do FS_Node.
+#
+#    Args:
+#        request_data (dict): Um dicionário contendo os dados da requisição.
+#
+#    Returns:
+#        dict: Um dicionário com a resposta para a requisição
     action = request_data.get("action")
     node_id = request_data.get("node_id")
     node_address = request_data.get("node_address")
