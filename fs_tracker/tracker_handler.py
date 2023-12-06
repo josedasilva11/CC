@@ -16,18 +16,18 @@ def process_request(request_data):
 #    Returns:
 #        dict: Um dicionário com a resposta para a requisição
     action = request_data.get("action")
-    node_id = request_data.get("node_id")
+    node_name = request_data.get("node_name")  # Usando nome do nodo em vez de ID
     node_address = request_data.get("node_address")
     files = request_data.get("files", [])
     
     with nodes_lock:
         if action == "register":
-            nodes_info[node_id] = {"node_address": node_address, "files": files}
+            nodes_info[node_name] = {"node_address": node_address, "files": files}
             return {"status": "success", "message": "Node registered successfully"}
 
         elif action == "update":
-            if node_id in nodes_info:
-                nodes_info[node_id]["files"] = files
+            if node_name in nodes_info:
+                nodes_info[node_name]["files"] = files
                 return {"status": "success", "message": "Node updated successfully"}
             else:
                 return {"status": "error", "message": "Node not found"}
@@ -35,7 +35,9 @@ def process_request(request_data):
         elif action == "query":
             file_name = request_data.get("filename")
             nodes_with_file = [
-                nid for nid, data in nodes_info.items() if any(f["filename"] == file_name for f in data["files"])
+                {'name': name, 'address': data['address']} 
+                for name, data in nodes_info.items() 
+                if any(f["filename"] == file_name for f in data["files"])
             ]
             if nodes_with_file:
                 return {"status": "success", "nodes": nodes_with_file}

@@ -44,7 +44,7 @@ def send_request_to_tracker(tracker_address, request_data):
     return json.loads(response.decode('utf-8'))
 
 # Função para registrar o nó no FS_Tracker com a lista de arquivos
-def register_node(tracker_address, node_id, node_address, directory):
+def register_node(tracker_address, node_name, node_address, directory):
 
 #    Registra o nó no FS_Tracker com a lista de arquivos.
 #
@@ -60,7 +60,7 @@ def register_node(tracker_address, node_id, node_address, directory):
     files = get_file_info(directory)
     request_data = {
         "action": "register",
-        "node_id": node_id,
+        "node_name": node_name,
         "node_address": node_address,
         "files": files,
         "timestamp": datetime.now().isoformat()
@@ -68,7 +68,7 @@ def register_node(tracker_address, node_id, node_address, directory):
     return send_request_to_tracker(tracker_address, request_data)
 
 # Função para atualizar as informações do nó no FS_Tracker
-def update_node_info(tracker_address, node_id, node_address, directory):
+def update_node_info(tracker_address, node_name, node_address, directory):
 
 #    Atualiza as informações do nó no FS_Tracker.
 #
@@ -84,7 +84,7 @@ def update_node_info(tracker_address, node_id, node_address, directory):
     files = get_file_info(directory)
     request_data = {
         "action": "update",
-        "node_id": node_id,
+        "node_name": node_name,
         "node_address": node_address,
         "files": files,
         "timestamp": datetime.now().isoformat()
@@ -92,7 +92,7 @@ def update_node_info(tracker_address, node_id, node_address, directory):
     return send_request_to_tracker(tracker_address, request_data)
 
 # Função para consultar a localização de um arquivo no FS_Tracker
-def query_file_location(tracker_address, node_id, file_name):
+def query_file_location(tracker_address, node_name, file_name):
     
 #    Consulta a localização de um arquivo no FS_Tracker.
 #
@@ -106,7 +106,7 @@ def query_file_location(tracker_address, node_id, file_name):
 
     request_data = {
         "action": "query",
-        "node_id": node_id,
+        "node_name": node_name,
         "filename": file_name,
         "timestamp": datetime.now().isoformat()
     }

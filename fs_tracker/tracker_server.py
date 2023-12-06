@@ -7,7 +7,7 @@ from datetime import datetime
 from tracker_handler import process_request
 
 # Dicionário para armazenar a informação dos nodos e ficheiros 
-nodes_info = {}
+nodes_info = {} # Exemplo: {'nodeName': {'address': ('ip', port), 'files': [...], 'name': 'nodeName'}}
 
 # Lock para sincronização de acesso ao dicionário
 nodes_lock = threading.Lock()
@@ -29,9 +29,20 @@ def handle_client(conn, addr):
                 if not data:
                     break
                 message = json.loads(data.decode('utf-8'))
+                
+                # Adicionar ou atualizar o nome do nodo no dicionário nodes_info
+                if message.get("action") in ["register", "update"]:
+                    node_name = message.get("node_name")
+                    with nodes_lock:
+                        if node_name:
+                            nodes_info[node_name] = {
+                                'address': addr,
+                                'files': message.get("files", []),
+                                'name': node_name
+                            }
 
                 # Processar a requisição com a função do tracker_handler.py
-                response_data = process_request(message)
+                response_data = process_request(message, nodes_info, nodes_lock)
                 
                 # Responder ao nodo
                 response = json.dumps(response_data).encode('utf-8')

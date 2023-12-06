@@ -45,15 +45,14 @@ def register_with_tracker(tracker_address, node_info):
 
 if __name__ == "__main__":
     tracker_address = ('localhost', 9090)  # Endereço e porta do tracker
-    node_address = "seu_endereco_ip:porta"  # Substitua pelo seu endereço IP e porta
-    node_id = hashlib.sha256(node_address.encode('utf-8')).hexdigest()
+    node_name = "Node1"  # Nome deste nodo
     files_directory = 'files'
 
     # Informações sobre o nó
     node_info = {
         "action": "register",
-        "node_id": node_id,
-        "node_address": node_address,
+        "node_name": node_name,
+        "node_address": "seu_endereco_ip:porta",  # Substitua pelo seu endereço IP e porta
         "timestamp": datetime.now().isoformat() + 'Z'
     }
 
@@ -62,6 +61,6 @@ if __name__ == "__main__":
 
     # Verificar a resposta do tracker e imprimir uma mensagem de sucesso ou falha
     if response['status'] == 'success':
-        print(f"Conectado com sucesso! ID do nó: {node_id}")
+        print(f"Conectado com sucesso! Nome do nó: {node_name}")
     else:
         print(f"Falha na conexão: {response['message']}")

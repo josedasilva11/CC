@@ -52,6 +52,7 @@ def handle_request(data, addr, udp_socket):
     if action == 'request_block':
         file_name = message.get('file_name')
         block_id = message.get('block_id')
+        server_name = message.get('server_name')  # Nome do servidor solicitado
         block_data, error = get_block_data(file_name, block_id)
 
         # Prepara a resposta.

@@ -19,7 +19,7 @@ def calculate_block_hash(data):
    
     return hashlib.sha256(data).hexdigest()
 
-def send_udp_request(server_address, request_data):
+def send_udp_request(server_name, server_address, request_data):
 #    Envia uma requisição UDP e espera pela resposta.
 #
 #    Args:
@@ -29,20 +29,19 @@ def send_udp_request(server_address, request_data):
 #    Returns:
 #        tuple: Resposta do servidor e um valor de erro, se houver.
    
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp_socket:
-        udp_socket.settimeout(5)  # Define um tempo limite para a resposta.
-        try:
-            # Envia os dados serializados para o servidor.
-            udp_socket.sendto(json.dumps(request_data).encode(), server_address)
-            # Aguarda pela resposta.
-            response, _ = udp_socket.recvfrom(4096)
-            return json.loads(response.decode()), None
-        except socket.timeout:
-            return None, "Timeout"
-        except Exception as e:
-            return None, str(e)
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp_socket:
+            udp_socket.settimeout(5)
+            try:
+                request_data['server_name'] = server_name  # Adiciona o nome do servidor ao request
+                udp_socket.sendto(json.dumps(request_data).encode(), server_address)
+                response, _ = udp_socket.recvfrom(4096)
+                return json.loads(response.decode()), None
+            except socket.timeout:
+                return None, "Timeout"
+            except Exception as e:
+                return None, str(e)
 
-def request_block(file_name, block_id, server_address):
+def request_block(file_name, block_id, server_name, server_address):
 #    Solicita um bloco específico do arquivo ao servidor, com retransmissões se necessário.
 #
 #    Args:
@@ -57,7 +56,7 @@ def request_block(file_name, block_id, server_address):
     while retries < MAX_RETRIES:
         # Prepara a solicitação de bloco.
         request_data = {'action': 'request_block', 'file_name': file_name, 'block_id': block_id}
-        response, error = send_udp_request(server_address, request_data)
+        response, error = send_udp_request(server_name, server_address, request_data)
 
         if response and 'data' in response:
             # Decodifica e verifica a integridade do bloco.
@@ -77,7 +76,7 @@ def request_block(file_name, block_id, server_address):
     print(f"Não foi possível obter o bloco {block_id} após {MAX_RETRIES} tentativas.")
     return None
 
-def request_file(file_name, server_address, output_file):
+def request_file(file_name, server_name, server_address, output_file):
 #    Solicita um arquivo inteiro, bloco por bloco, do servidor e o monta localmente.
 #
 #    Args:
@@ -88,6 +87,7 @@ def request_file(file_name, server_address, output_file):
     # Determina o número de blocos necessários para o arquivo.
     file_size = os.path.getsize(file_name)
     num_blocks = (file_size + BLOCK_SIZE - 1) // BLOCK_SIZE
+
 
     with open(output_file, 'wb') as file:
         for block_id in range(num_blocks):
