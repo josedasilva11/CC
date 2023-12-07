@@ -1,31 +1,34 @@
 import socket
 import json
 import threading
-
+import time
 import hashlib
 
 BLOCK_SIZE = 4096  # Tamanho do bloco em bytes
 
+# Cria uma estrutura de dados para rastrear as métricas de desempenho
+performance_metrics = {}
+
 def calculate_block_hash(data):
-#    Calcula o hash SHA-256 de um bloco de dados, usado para verificar a integridade no lado do cliente.
-#
-#    Args:
-#        data (bytes): Dados do bloco para calcular o hash.
-#
-#    Returns:
-#        str: Hash SHA-256 dos dados.
+    # Calcula o hash SHA-256 de um bloco de dados, usado para verificar a integridade no lado do cliente.
+    #
+    # Args:
+    #     data (bytes): Dados do bloco para calcular o hash.
+    #
+    # Returns:
+    #     str: Hash SHA-256 dos dados.
 
     return hashlib.sha256(data).hexdigest()
 
 def get_block_data(file_name, block_id):
-#    Lê e retorna um bloco específico de um arquivo. Útil para responder às solicitações de blocos dos clientes.
-#
-#    Args:
-#        file_name (str): Caminho do arquivo.
-#        block_id (int): Identificador do bloco a ser lido.
-#
-#    Returns:
-#        tuple: Dados do bloco e uma mensagem de erro, se houver.
+    # Lê e retorna um bloco específico de um arquivo. Útil para responder às solicitações de blocos dos clientes.
+    #
+    # Args:
+    #     file_name (str): Caminho do arquivo.
+    #     block_id (int): Identificador do bloco a ser lido.
+    #
+    # Returns:
+    #     tuple: Dados do bloco e uma mensagem de erro, se houver.
 
     try:
         with open(file_name, 'rb') as file:
@@ -38,12 +41,12 @@ def get_block_data(file_name, block_id):
         return None, f"Erro ao ler o arquivo {file_name}: {e}"
 
 def handle_request(data, addr, udp_socket):
-#    Manipula a requisição recebida do cliente. Processa as solicitações recebidas dos clientes, lê o bloco solicitado e envia de volta. Responde com erro se o bloco não puder ser lido.
-#
-#    Args:
-#        data (bytes): Dados recebidos.
-#        addr (tuple): Endereço do remetente.
-#        udp_socket (socket): Socket UDP do servidor.
+    # Manipula a requisição recebida do cliente. Processa as solicitações recebidas dos clientes, lê o bloco solicitado e envia de volta. Responde com erro se o bloco não puder ser lido.
+    #
+    # Args:
+    #     data (bytes): Dados recebidos.
+    #     addr (tuple): Endereço do remetente.
+    #     udp_socket (socket): Socket UDP do servidor.
 
     message = json.loads(data.decode())
     action = message.get('action')
@@ -56,6 +59,12 @@ def handle_request(data, addr, udp_socket):
         block_data, error = get_block_data(file_name, block_id)
 
         # Prepara a resposta.
+        if server_name:
+            response_time = time.time() - message.get('start_time')
+            block_size = len(block_data) if block_data else 0
+            transfer_rate = block_size / response_time if response_time > 0 else 0
+            performance_metrics.setdefault(server_name, []).append({'block_id': block_id, 'response_time': response_time, 'transfer_rate': transfer_rate})
+
         if block_data:
             checksum = calculate_block_hash(block_data)
             response = {'status': 'success', 'data': block_data.decode(), 'checksum': checksum}
@@ -66,16 +75,18 @@ def handle_request(data, addr, udp_socket):
         udp_socket.sendto(json.dumps(response).encode(), addr)
 
 def start_udp_server(address):
-#    Inicia o servidor UDP, configurando-o para ouvir solicitações e processá-las em threads separadas para lidar com múltiplas solicitações simultâneas.
-#
-#    Args:
-#        address (tuple): Endereço para o servidor ouvir (host, port).
+    # Inicia o servidor UDP, configurando-o para ouvir solicitações e processá-las em threads separadas para lidar com múltiplas solicitações simultâneas.
+    #
+    # Args:
+    #     address (tuple): Endereço para o servidor ouvir (host, port).
 
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp_socket:
         udp_socket.bind(address)
         print(f"Servidor UDP iniciado em {address}")
         while True:
             data, addr = udp_socket.recvfrom(65536)  # Tamanho máximo do datagrama.
+            message = json.loads(data.decode())
+            message['start_time'] = time.time()  # Registra o tempo de início antes de processar a solicitação
             threading.Thread(target=handle_request, args=(data, addr, udp_socket)).start()
 
 # Exemplo de uso
