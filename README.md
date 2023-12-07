@@ -83,13 +83,13 @@ Agora, inicie um nó FS_Node com o seguinte comando:
 
 python fs_node.py
 ```
-O nó será registrado no FS_Tracker e estará pronto para partilhar arquivos.
+O nó será registado no FS_Tracker e estará pronto para partilhar arquivos.
 
 ## Registrar Múltiplos FS_Nodes
-Você pode registrar vários FS_Nodes na rede. Basta seguir as etapas acima para iniciar cada nó em uma máquina diferente. Certifique-se de que todos os nós estejam configurados com o mesmo endereço do FS_Tracker.
+Você pode registar vários FS_Nodes na rede. Basta seguir as etapas acima para iniciar cada nó numa máquina diferente. Certifique-se de que todos os nós estejam configurados com o mesmo endereço do FS_Tracker.
 
 ## Consultar a Localização de um Arquivo
-Para consultar a localização de um arquivo por nome, você pode usar um cliente para se conectar ao FS_Tracker e enviar uma consulta. Você pode implementar um cliente personalizado ou usar ferramentas de rede para enviar solicitações ao FS_Tracker na porta 9090.
+Para consultar a localização de um arquivo pelo nome, você pode usar um cliente para se conectar ao FS_Tracker e enviar uma consulta. Pode então implementar um cliente personalizado ou usar ferramentas de rede para enviar solicitações ao FS_Tracker na porta 9090.
 
 A consulta deve incluir o nome do arquivo que você deseja localizar. O FS_Tracker responderá com uma lista de FS_Nodes que possuem o arquivo e os blocos disponíveis neles.
 
