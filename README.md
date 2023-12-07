@@ -10,9 +10,12 @@ O File Sharing System é um sistema de partilha de arquivos que permite que vár
 
 ## Funcionalidades
 
-- Registo de FS_Nodes no FS_Tracker.
-- Atualização periódica das informações dos arquivos nos FS_Nodes.
-- Consulta da localização de arquivos por nome.
+Registo de FS_Nodes no FS_Tracker.
+Atualização periódica das informações dos arquivos nos FS_Nodes.
+Consulta da localização de arquivos por nome.
+Aceitação de pedidos de blocos, em paralelo, de múltiplos outros FS_Nodes.
+Pedido, em paralelo, de blocos do mesmo ficheiro a múltiplos FS_Nodes.
+Suporte a cenários de perda de blocos, garantindo uma entrega fiável.
 
 ## Requisitos
 
