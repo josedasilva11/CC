@@ -70,12 +70,12 @@ O FS_Tracker estará a ouvir em localhost:9090 por padrão.
 
 
 ## Iniciar um Nó FS_Node
-Antes de iniciar um nó FS_Node, verifique se o arquivo fs_node.py foi configurado corretamente com o endereço do FS_Tracker. Abra o arquivo e encontre a seguinte linha:
+Antes de iniciar um nó FS_Node, verifique se o ficheiro fs_node.py foi configurado corretamente com o endereço do FS_Tracker. Abra o ficheiro e encontre a seguinte linha:
 
 ```python
 tracker_address = ('localhost', 9090)
 ```
-Aqui, você pode configurar o endereço do FS_Tracker conforme necessário.
+Aqui, você pode então configurar o endereço do FS_Tracker conforme necessário.
 
 Agora, inicie um nó FS_Node com o seguinte comando:
 
