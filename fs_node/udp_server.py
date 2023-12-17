@@ -60,10 +60,10 @@ def handle_request(data, addr, udp_socket):
 
         # Prepara a resposta.
         if server_name:
-            response_time = time.time() - message.get('start_time')
+            #response_time = time.time() - message.get('start_time')
             block_size = len(block_data) if block_data else 0
-            transfer_rate = block_size / response_time if response_time > 0 else 0
-            performance_metrics.setdefault(server_name, []).append({'block_id': block_id, 'response_time': response_time, 'transfer_rate': transfer_rate})
+            #transfer_rate = block_size / response_time if response_time > 0 else 0
+            #performance_metrics.setdefault(server_name, []).append({'block_id': block_id, 'response_time': response_time, 'transfer_rate': transfer_rate})
 
         if block_data:
             checksum = calculate_block_hash(block_data)

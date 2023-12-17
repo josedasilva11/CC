@@ -51,7 +51,10 @@ def request_block(file_name, block_id, server_name, server_address):
     #
     # Returns:
     #     bytes: Dados do bloco solicitado ou None se falhar.
-   
+    
+    #request_data = {'action': 'request_block', 'file_name': file_name, 'block_id': block_id}
+    #print(f"Solicitando Bloco {block_id} do Ficheiro {file_name}")
+
     retries = 0
     while retries < MAX_RETRIES:
         # Prepara a solicitação de bloco.
@@ -102,6 +105,8 @@ def request_file(file_name, server_name, server_address, output_file):
                 print(f"Falha ao baixar o bloco {block_id} do arquivo {file_name}.")
                 return
             file.write(block_data)
+
+
 
 # Exemplo de uso
 file_name = 'example.txt'             # Nome do arquivo a ser solicitado
