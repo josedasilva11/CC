@@ -1,4 +1,5 @@
 import hashlib
+import os
 
 
 def get_file_blocks(filename, block_size=4096):
@@ -22,6 +23,30 @@ def get_file_blocks(filename, block_size=4096):
             blocks.append((block, block_hash))
     return blocks
 
+def get_file_info(directory, block_size=4096):
+    """
+    Lista todos os arquivos em um diretório e calcula o hash de cada bloco de cada arquivo.
+
+    Args:
+        directory (str): Caminho do diretório a ser examinado.
+        block_size (int): Tamanho do bloco em bytes para a divisão dos arquivos.
+
+    Returns:
+        list: Lista de dicionários, cada um contendo o nome do arquivo, seu tamanho total
+              e a lista de hashes de seus blocos.
+    """
+    files_info = []
+    for filename in os.listdir(directory):
+        filepath = os.path.join(directory, filename)
+        if os.path.isfile(filepath):
+            file_size = os.path.getsize(filepath)
+            blocks = get_file_blocks(filepath, block_size)
+            files_info.append({
+                "filename": filename,
+                "filesize": file_size,
+                "blocks": [block_hash for _, block_hash in blocks]
+            })
+    return files_info
 
 def get_file_block(filename, block_id, block_size=4096):
    

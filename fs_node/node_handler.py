@@ -23,7 +23,14 @@ def get_file_info(directory):
 
 def send_request_to_tracker(tracker_address, request_data):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        print("Conectando ao FS_Tracker...")
         s.connect(tracker_address)
+
+        print("Enviando solicitação...")
+        s.sendall(json.dumps(request_data).encode('utf-8'))
+        print("Esperando pela resposta...")
+        response = s.recv(1024)
+        print("Resposta recebida:", response)
         s.sendall(json.dumps(request_data).encode('utf-8'))
         response = s.recv(1024)
     return json.loads(response.decode('utf-8'))
@@ -61,6 +68,7 @@ def query_file_location(tracker_address, node_name, file_name):
         "timestamp": datetime.now().isoformat()
     }
     return send_request_to_tracker(tracker_address, request_data)
+
 
 def register_files_at_tracker(tracker_address, node_name, node_address, shared_directory):
     files_info = get_file_info(shared_directory)
