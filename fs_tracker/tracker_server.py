@@ -51,7 +51,7 @@ def start_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((host, port))
     server.listen()
-    logging.info(f"FS_Tracker ouvindo em {host}:{port}")
+    logging.info(f"FS_Tracker à escuta em {host}:{port}")
 
     while True:
         conn, addr = server.accept()
