@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 server_running = True
 BLOCK_SIZE = 4096  # Tamanho do bloco em bytes
 
-server_directory = os.path.join(os.getcwd(), "server1")
+server_directory = os.path.join(os.getcwd(), "server5")
 
 # Certifique-se de que o diretório existe
 if not os.path.exists(server_directory):
