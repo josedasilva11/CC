@@ -1,7 +1,12 @@
 import socket
 import json
+import sys
 from datetime import datetime
 import os
+
+
+from ..common import utilities
+
 
 # Função para gerar a lista de informações dos arquivos para registro
 def get_file_info(directory):
@@ -18,10 +23,11 @@ def get_file_info(directory):
     for filename in os.listdir(directory):
         if os.path.isfile(os.path.join(directory, filename)):
             filepath = os.path.join(directory, filename)
+            blocks = get_file_blocks(filepath)
             files.append({
                 "filename": filename,
                 "filesize": os.path.getsize(filepath),
-                "filehash": "hash_placeholder"  # Substitua com o cálculo de hash real
+                "blocks": [{"index": i, "hash": block_hash} for i, (block, block_hash) in enumerate(blocks)]
             })
     return files
 

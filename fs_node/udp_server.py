@@ -3,6 +3,7 @@ import json
 import threading
 import time
 import hashlib
+from common import utilities
 
 BLOCK_SIZE = 4096  # Tamanho do bloco em bytes
 
@@ -21,57 +22,26 @@ def calculate_block_hash(data):
     return hashlib.sha256(data).hexdigest()
 
 def get_block_data(file_name, block_id):
-    # Lê e retorna um bloco específico de um arquivo. Útil para responder às solicitações de blocos dos clientes.
-    #
-    # Args:
-    #     file_name (str): Caminho do arquivo.
-    #     block_id (int): Identificador do bloco a ser lido.
-    #
-    # Returns:
-    #     tuple: Dados do bloco e uma mensagem de erro, se houver.
 
-    try:
-        with open(file_name, 'rb') as file:
-            file.seek(block_id * BLOCK_SIZE)  # Posiciona no início do bloco.
-            data = file.read(BLOCK_SIZE)  # Lê o bloco de dados.
-            return data, None
-    except FileNotFoundError:
-        return None, f"Arquivo {file_name} não encontrado."
-    except IOError as e:
-        return None, f"Erro ao ler o arquivo {file_name}: {e}"
+    block_data = utilities.get_file_block(file_name, block_id, BLOCK_SIZE)
+    return block_data
+    
 
 def handle_request(data, addr, udp_socket):
-    # Manipula a requisição recebida do cliente. Processa as solicitações recebidas dos clientes, lê o bloco solicitado e envia de volta. Responde com erro se o bloco não puder ser lido.
-    #
-    # Args:
-    #     data (bytes): Dados recebidos.
-    #     addr (tuple): Endereço do remetente.
-    #     udp_socket (socket): Socket UDP do servidor.
-
     message = json.loads(data.decode())
     action = message.get('action')
     
-    # Processa a ação de solicitação de bloco.
     if action == 'request_block':
         file_name = message.get('file_name')
         block_id = message.get('block_id')
-        server_name = message.get('server_name')  # Nome do servidor solicitado
-        block_data, error = get_block_data(file_name, block_id)
-
-        # Prepara a resposta.
-        if server_name:
-            #response_time = time.time() - message.get('start_time')
-            block_size = len(block_data) if block_data else 0
-            #transfer_rate = block_size / response_time if response_time > 0 else 0
-            #performance_metrics.setdefault(server_name, []).append({'block_id': block_id, 'response_time': response_time, 'transfer_rate': transfer_rate})
+        block_data = get_block_data(file_name, block_id)
 
         if block_data:
             checksum = calculate_block_hash(block_data)
-            response = {'status': 'success', 'data': block_data.decode(), 'checksum': checksum}
+            response = {'status': 'success', 'data': block_data.decode('latin1'), 'checksum': checksum}
         else:
-            response = {'status': 'error', 'message': error or 'Erro desconhecido.'}
+            response = {'status': 'error', 'message': 'Block not found.'}
 
-        # Envia a resposta ao cliente.
         udp_socket.sendto(json.dumps(response).encode(), addr)
 
 def start_udp_server(address):

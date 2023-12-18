@@ -1,22 +1,27 @@
 import hashlib
-import os
 
-def calculate_file_hash(filename):
-    
-#    Calcula o hash SHA-256 de um arquivo inteiro.É útil para verificar a integridade de um arquivo.
-#
-#    Args:
-#        filename (str): Caminho do arquivo cujo hash será calculado.
-#
-#    Returns:
-#        str: Hash SHA-256 do arquivo.
-    
-    sha256_hash = hashlib.sha256()
-    with open(filename, "rb") as file:
-        # Lê o arquivo em blocos de 4096 bytes para economizar memória.
-        for byte_block in iter(lambda: file.read(4096), b""):
-            sha256_hash.update(byte_block)
-    return sha256_hash.hexdigest()
+
+def get_file_blocks(filename, block_size=4096):
+    """
+    Divide um arquivo em blocos de tamanho fixo e calcula o hash de cada bloco.
+
+    Args:
+        filename (str): Caminho do arquivo.
+        block_size (int): Tamanho do bloco em bytes.
+
+    Returns:
+        list: Lista de tuplas, cada uma contendo os dados do bloco e seu hash SHA-256.
+    """
+    blocks = []
+    with open(filename, 'rb') as file:
+        while True:
+            block = file.read(block_size)
+            if not block:
+                break
+            block_hash = hashlib.sha256(block).hexdigest()
+            blocks.append((block, block_hash))
+    return blocks
+
 
 def get_file_block(filename, block_id, block_size=4096):
    
@@ -53,14 +58,3 @@ def reconstruct_file_from_blocks(blocks, output_filename):
     except IOError as e:
         print(f"Erro ao escrever no arquivo {output_filename}: {e}")
 
-# Exemplo de uso
-file_hash = calculate_file_hash('path/to/your/file.txt')
-print("File Hash:", file_hash)
-
-# Outros exemplos
-block = get_file_block('path/to/your/file.txt', 0)  # Pega o primeiro bloco
-if block:
-    print("Block Data:", block)
-
-blocks = [b'Hello', b' ', b'World!']  # Exemplo de blocos de dados
-reconstruct_file_from_blocks(blocks, 'path/to/output/file.txt')
