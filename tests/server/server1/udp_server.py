@@ -45,9 +45,9 @@ def register_server_with_tracker(tracker_address, node_name, node_address, files
             s.connect(tracker_address)
             s.sendall(json.dumps(server_info).encode('utf-8'))
             response = json.loads(s.recv(1024).decode('utf-8'))
-            logging.info(f"Resposta do FS_Tracker ao registro: {response}")
+            logging.info(f"Resposta do FS_Tracker ao registo: {response}")
     except Exception as e:
-        logging.error(f"Erro ao registrar no FS_Tracker: {e}")
+        logging.error(f"Erro ao registar no FS_Tracker: {e}")
 
 
 
@@ -83,7 +83,7 @@ def check_server_status():
                 if response.decode() == 'server_running':
                     logging.info("O servidor está em execução.")
                 else:
-                    logging.warning("O servidor não está respondendo.")
+                    logging.warning("O servidor não está a responder.")
         except Exception as e:
             logging.error(f"Erro ao verificar o servidor: {str(e)}")
 
@@ -109,7 +109,7 @@ def handle_request(data, addr, udp_socket):
             if block_data:
                 checksum = calculate_block_hash(block_data)
                 response = {'status': 'success', 'data': block_data.decode('latin1'), 'checksum': checksum}
-                print(f"Enviando bloco {block_id} para {addr}")
+                print(f"A enviar Bloco {block_id} para {addr}")
             else:
                 response = {'status': 'error', 'message': 'Block not found.'}
                 print(f"Bloco {block_id} não encontrado para {addr}")
@@ -167,7 +167,7 @@ if __name__ == "__main__":
 def stop_server():
     global server_running
     server_running = False
-    logging.info("Encerrando o servidor.")
+    logging.info("A encerrar o servidor.")
 
 
 server_address = ('localhost', 9091)  # Endereço do servidor
