@@ -88,7 +88,7 @@ python fs_node.py
 ```
 O nó será registado no FS_Tracker e estará pronto para partilhar arquivos.
 
-## Registrar Múltiplos FS_Nodes
+## Registar Múltiplos FS_Nodes
 Você pode registar vários FS_Nodes na rede. Basta seguir as etapas acima para iniciar cada nó numa máquina diferente. Certifique-se de que todos os nós estejam configurados com o mesmo endereço do FS_Tracker.
 
 ## Consultar a Localização de um Arquivo
