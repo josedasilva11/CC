@@ -52,7 +52,7 @@ def request_block(blocks, block_index, file_name, source, expected_checksum):
                 print(f"Bloco {block_index} recebido e verificado.")
                 return
             else:
-                print(f"Erro de integridade no bloco {block_index}. Tentando novamente...")
+                print(f"Erro de integridade no bloco {block_index}. A tentar novamente...")
 
         retries += 1
         print(f"Erro ao receber bloco {block_index}: {error}")
@@ -104,7 +104,7 @@ def request_file(file_name, output_file):
             if block_data:
                 file.write(block_data)
             else:
-                print(f"Falha ao baixar um dos blocos do arquivo {file_name}.")
+                print(f"Falha ao transferir um dos blocos do arquivo {file_name}.")
                 return
 
 def select_sources(file_blocks_info):
@@ -137,7 +137,7 @@ def download_file(file_name, file_blocks_info, output_file):
             if blocks[i]:
                 file.write(blocks[i])
             else:
-                print(f"Falha ao reconstruir o arquivo: Bloco {i} está faltando.")
+                print(f"Falha ao reconstruir o arquivo: Bloco {i} está em falta.")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
