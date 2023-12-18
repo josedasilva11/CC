@@ -26,9 +26,9 @@ def send_request_to_tracker(tracker_address, request_data):
         print("Conectando ao FS_Tracker...")
         s.connect(tracker_address)
 
-        print("Enviando solicitação...")
+        print("A enviar solicitação...")
         s.sendall(json.dumps(request_data).encode('utf-8'))
-        print("Esperando pela resposta...")
+        print("A esperar pela resposta...")
         response = s.recv(1024)
         print("Resposta recebida:", response)
         s.sendall(json.dumps(request_data).encode('utf-8'))
@@ -44,7 +44,7 @@ def register_node(tracker_address, node_name, node_address, directory):
         "files": files,
         "timestamp": datetime.now().isoformat()
     }
-    print(f"Registro enviado ao tracker: {request_data}")
+    print(f"Registo enviado ao tracker: {request_data}")
     response = send_request_to_tracker(tracker_address, request_data)
     print(f"Resposta do tracker: {response}")
     return response
