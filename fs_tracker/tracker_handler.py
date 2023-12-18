@@ -25,16 +25,16 @@ def process_request(request_data):
 
     with nodes_lock:
         if action == "register":
-            # Extraia o nome do nodo e o endereço do nodo da solicitação
+            # Extrai o nome do nodo e o endereço do nodo da solicitação
             node_name = request_data.get("node_name")
             node_address = request_data.get("node_address")
 
-            # Verifique se o nome do nodo e o endereço foram fornecidos
+            # Verifica se o nome do nodo e o endereço foram fornecidos
             if not node_name or not node_address:
                 logging.error(f"Dados incompletos na solicitação de registro: Nome do nodo: {node_name}, Endereço: {node_address}")
                 return {"status": "error", "message": "Dados incompletos para registro"}
 
-            # Atualize nodes_info com as informações do novo nodo
+            # Atualiza nodes_info com as informações do novo nodo
             nodes_info[node_name] = {"node_address": node_address, "files": files}
             logging.info(f"Servidor {node_name} registrado com sucesso. Endereço: {node_address}, Arquivos: {files}")
             return {"status": "success", "message": "Node registered successfully"}
