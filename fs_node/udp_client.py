@@ -1,6 +1,7 @@
 import socket
 import json
 import os
+import sys
 import hashlib
 import time
 from node_handler import query_file_location
@@ -14,6 +15,8 @@ import threading
 BLOCK_SIZE = 4096  # Tamanho do bloco em bytes (aqui, 4KB)
 MAX_RETRIES = 5    # Número máximo de tentativas de retransmissão para cada bloco
 
+
+
 def calculate_block_hash(data):
     # Calcula o hash SHA-256 de um bloco de dados.
     #
@@ -26,15 +29,6 @@ def calculate_block_hash(data):
     return hashlib.sha256(data).hexdigest()
 
 def send_udp_request(server_name, server_address, request_data):
-    # Envia uma requisição UDP e espera pela resposta.
-    #
-    # Args:
-    #     server_address (tuple): Endereço do servidor (host, port).
-    #     request_data (dict): Dados a serem enviados ao servidor.
-    #
-    # Returns:
-    #     tuple: Resposta do servidor e um valor de erro, se houver.
-   
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as udp_socket:
         udp_socket.settimeout(5)
         try:
@@ -46,6 +40,7 @@ def send_udp_request(server_name, server_address, request_data):
             return None, "Timeout"
         except Exception as e:
             return None, str(e)
+
 
 def request_block(blocks, block_index, file_name, source, expected_checksum):
     server_address = (source['address'], source['port'])
@@ -147,26 +142,42 @@ def download_file(file_name, file_blocks_info, output_file):
                 print(f"Falha ao reconstruir o arquivo: Bloco {i} está faltando.")
 
 def request_block(blocks, block_index, file_name, source, expected_checksum):
+    print(f"Solicitando bloco {block_index} do arquivo {file_name} de {source}")
+    server_address = (source['address'], source['port'])
     retries = 0
     while retries < MAX_RETRIES:
-        server_address = (source['address'], source['port'])
-        block_data = send_udp_request(file_name, block_index, server_address, expected_checksum)
+        request_data = {'action': 'request_block', 'file_name': file_name, 'block_id': block_index}
+        response, error = send_udp_request(server_address, request_data)
 
-        if block_data:
-            blocks[block_index] = block_data
-            return
-        else:
-            print(f"Retransmissão para o bloco {block_index} falhou. Tentando outra fonte...")
-            # Lógica para escolher outra fonte, se disponível.
-            new_source = get_alternative_source(file_name, block_index)
-            if new_source:
-                source = new_source
+        if response and 'data' in response:
+            block_data = response['data'].encode('latin1')
+            block_hash = calculate_block_hash(block_data)
+
+            if block_hash == expected_checksum:
+                blocks[block_index] = block_data
+                print(f"Bloco {block_index} recebido e verificado.")
+                return
             else:
-                print(f"Não há fontes alternativas disponíveis para o bloco {block_index}.")
-                break
+                print(f"Erro de integridade no bloco {block_index}. Tentando novamente...")
 
         retries += 1
+        print(f"Erro ao receber bloco {block_index}: {error}")
+        time.sleep(1)
 
+    print(f"Não foi possível obter o bloco {block_index} após {MAX_RETRIES} tentativas.")
+    blocks[block_index] = None
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Uso: python udp_client.py nome_do_arquivo")
+        sys.exit(1)
+
+    file_name = sys.argv[1]
+    server_address = ('localhost', 9091)  # Exemplo de endereço e porta do servidor
+    output_file = 'output_' + file_name  # Nome do arquivo de saída
+
+    request_file(file_name, 'FS_Server', server_address, output_file)
 
 # Exemplo de uso
 file_name = 'example.txt'             # Nome do arquivo a ser solicitado

@@ -1,7 +1,7 @@
 import socket
 import json
 from datetime import datetime
-import os
+import sys
 import hashlib
 
 # Função para calcular o hash SHA-256 de um arquivo
@@ -23,40 +23,35 @@ def get_file_hash(filepath):
 
 # Função para registrar as informações do nó com o tracker
 def register_with_tracker(tracker_address, node_info):
- 
-#    Registra as informações do nó com o tracker.
-#
-#    Args:
-#        tracker_address (tuple): Uma tupla contendo o endereço IP e a porta do tracker.
-#        node_info (dict): Um dicionário contendo informações sobre o nó.
-#
-#    Returns:
-#        dict: Um dicionário com a resposta do tracker.
- 
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect(tracker_address)
             message = json.dumps(node_info).encode('utf-8')
             s.sendall(message)
+            print(f"Registrando no tracker com informações: {node_info}")
             data = s.recv(1024)
-        return json.loads(data.decode('utf-8'))
+        response = json.loads(data.decode('utf-8'))
+        print(f"Resposta do tracker: {response}")
+        return response
     except socket.error as e:
         return {'status': 'error', 'message': str(e)}
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Uso: python node_client.py [caminho do diretório compartilhado]")
+        sys.exit(1)
+
+    shared_directory = sys.argv[1]
     tracker_address = ('localhost', 9090)  # Endereço e porta do tracker
     node_name = "Node1"  # Nome deste nodo
-    files_directory = 'files'
 
-    # Informações sobre o nó
     node_info = {
         "action": "register",
         "node_name": node_name,
-        "node_address": "seu_endereco_ip:porta",  # Substitua pelo seu endereço IP e porta
+        "node_address": "seu_endereco_ip:porta",
+        "files_directory": shared_directory,  # Adicione esta linha
         "timestamp": datetime.now().isoformat() + 'Z'
     }
-
-    # Registrar o nó com o tracker
     response = register_with_tracker(tracker_address, node_info)
 
     # Verificar a resposta do tracker e imprimir uma mensagem de sucesso ou falha

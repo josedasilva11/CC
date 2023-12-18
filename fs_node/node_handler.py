@@ -1,8 +1,9 @@
 import socket
 import json
-
+import sys
 from datetime import datetime
 import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from common import utilities
 
 nodes_info = {} 
@@ -36,7 +37,10 @@ def register_node(tracker_address, node_name, node_address, directory):
         "files": files,
         "timestamp": datetime.now().isoformat()
     }
-    return send_request_to_tracker(tracker_address, request_data)
+    print(f"Registro enviado ao tracker: {request_data}")
+    response = send_request_to_tracker(tracker_address, request_data)
+    print(f"Resposta do tracker: {response}")
+    return response
 
 def update_node_info(tracker_address, node_name, node_address, directory):
     files = get_file_info(directory)
