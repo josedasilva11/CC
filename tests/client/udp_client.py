@@ -12,6 +12,8 @@ from fs_node.node_handler import query_file_location
 import random
 import threading
 
+
+
 # Configurações globais
 BLOCK_SIZE = 4096  # Tamanho do bloco em bytes (aqui, 4KB)
 MAX_RETRIES = 5    # Número máximo de tentativas de retransmissão para cada bloco
@@ -59,24 +61,51 @@ def request_block(blocks, block_index, file_name, source, expected_checksum):
     print(f"Não foi possível obter o bloco {block_index} após {MAX_RETRIES} tentativas.")
     blocks[block_index] = None
 
-def request_file(file_name, server_name, server_address, output_file):
-    print("Enviando solicitação ao FS_Tracker...")
-    file_blocks_info = query_file_location(server_address, server_name, file_name)
-    print("Resposta recebida do FS_Tracker:", file_blocks_info)
+def request_file(file_name, output_file):
+    # Informações do arquivo obtidas do FS_Tracker
+    file_info = {
+            "texto.txt": {
+            "filesize": 1058,
+            "blocks": ["687fce6eeba4d004714f4b2f3b237c6619e14f3b687065dcc2dcd79194becebd"]
+        }
+    }
 
-    if 'blocks' not in file_blocks_info:
-        print("Erro ao obter informações do arquivo do FS_Tracker.")
+    servidores = [('localhost', 9091)] 
+    # Verifique se o arquivo está na lista
+    if file_name not in file_info:
+        print(f"Arquivo {file_name} não encontrado.")
         return
 
+    blocks_info = file_info[file_name]["blocks"]
+    blocks = [None] * len(blocks_info)
+
+    # Função para solicitar cada bloco
+    def request_each_block(block_index):
+        for servidor in servidores:
+            if blocks[block_index] is None:  # Se o bloco ainda não foi baixado
+                source = {'address': servidor[0], 'port': servidor[1]}
+                expected_checksum = blocks_info[block_index]
+                request_block(blocks, block_index, file_name, source, expected_checksum)
+
+    # Criar threads para baixar cada bloco
+    threads = [threading.Thread(target=request_each_block, args=(i,)) for i in range(len(blocks_info))]
+    
+    # Iniciar todas as threads
+    for thread in threads:
+        thread.start()
+    
+    # Aguardar todas as threads terminarem
+    for thread in threads:
+        thread.join()
+
+    # Escrever os blocos no arquivo de saída
     with open(output_file, 'wb') as file:
-        for block_info in file_blocks_info['blocks']:
-            block_id = block_info['index']
-            expected_checksum = block_info['hash']
-            block_data = request_block(file_name, block_id, server_name, server_address, expected_checksum)
-            if block_data is None:
-                print(f"Falha ao baixar o bloco {block_id} do arquivo {file_name}.")
+        for block_data in blocks:
+            if block_data:
+                file.write(block_data)
+            else:
+                print(f"Falha ao baixar um dos blocos do arquivo {file_name}.")
                 return
-            file.write(block_data)
 
 def select_sources(file_blocks_info):
     # Esta função pode ser simples (escolha aleatória) ou complexa (baseada em critérios específicos)
@@ -116,7 +145,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     file_name = sys.argv[1]
-    server_address = ('localhost', 9091)  # Exemplo de endereço e porta do servidor
-    output_file = 'output_' + file_name  # Nome do arquivo de saída
+    output_file = 'output_' + file_name  
 
-    request_file(file_name, 'FS_Server', server_address, output_file)
+    request_file(file_name, output_file)
